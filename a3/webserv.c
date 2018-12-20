@@ -16,6 +16,171 @@
 #define NOTFOUND  404
 #define Ok 200
 #define NOTIMPL  500
+int err_404(){
+  char *resp = "HTTP/1.1 404 Not Found\nContent-Type: text/html\nContent-Length: 44\n\n<!DOCTYPE html> <html> <body> <h1> ERROR 4O4: NOT FOUND </h1></body> </html>\n";
+}
+
+int err_501(){
+  char *resp = "HTTP/1.1 501 Not Implemented\nContent-Type: text/html\nContent-Length: 44\n\n<!DOCTYPE html> <html> <body> <h1> ERROR 501: NOT IMPLEMENTED </h1></body> </html>\n";
+}
+
+int dir_req(char *fname){
+
+  DIR *thisDir;
+  struct dirent *entry;
+
+  printf("THIS IS DIRECTORY!\n");
+
+  char *listing = malloc(1024);
+  thisDir = opendir(fname);
+
+  if (thisDir == NULL){
+    printf("SOME ERROR HAS OCCURRED OR NO SUCH FILE FOUND!\n");
+    err_404();
+    return 1;
+  }
+
+  entry = readdir(thisDir);
+  char *e;
+
+  while (entry != NULL){
+    e = entry->d_name;
+    //printf("current entry is: %s\n", e);
+    strcat(listing, e);
+    strcat(listing, "\n");
+    entry = readdir(thisDir);
+  }
+
+  printf("full listing is: \n %s\n", listing);
+
+}
+
+int html_req(char *fname){
+
+  printf("This is the file: %s!\n", fname);
+
+  int fd = open(fname, O_RDONLY, 0777);
+  char *html = malloc(2048);
+
+  if (fd == -1){
+    printf("SOME ERROR HAS OCCURRED OR NO SUCH FILE FOUND!\n");
+    err_404();
+    return 1;
+  }
+
+  read(fd, html, 2048);
+
+  printf("this is the content: %s\n", html);
+  
+  close(fd);
+  free(html);
+
+}
+
+int jpg_req(char *fname){
+
+  printf("This is the file: %s!\n", fname);
+
+  FILE *fd;
+  fd = fopen(fname, "r");
+  long size;
+  char *buf = 0;
+  
+  if (fd == NULL){
+    printf("SOME ERROR HAS OCCURRED OR NO SUCH FILE FOUND!\n");
+    err_404();
+    return 1;
+  }
+
+  fseek(fd, 0, SEEK_END);
+  size = ftell(fd);
+  fseek(fd, 0, SEEK_SET);
+  
+  buf = malloc(size);
+}
+
+
+int cgi_req(char *fname){
+
+  printf("in cgi-req, fname is %s\n", fname);
+  
+  char *buf = malloc(2048);
+  FILE *fp;
+  char *cmd = malloc(64);//"./";
+  strcat(cmd, "./");
+  strcat(cmd, fname);
+
+  fp = popen(cmd, "r");
+  
+  if (fp == NULL){
+    printf("SOME ERROR HAS OCCURRED OR NO SUCH FILE FOUND!\n");
+    err_404();
+    return 1;
+  }
+
+  char *fin = malloc(256);
+
+  while (fgets(buf, 31, fp) != NULL){
+    //printf("%s\n", buf);
+    strcat(fin, buf);
+  }
+
+  printf("RESULT: %s\n", fin);
+
+  pclose(fp);
+  free(buf);
+}
+
+
+int handle_gnuplot(char *pname){
+  
+  count_files(pname);
+  
+}
+
+int handle_info(char *data){
+
+  char *fullfile = malloc(sizeof(data));
+  strcpy(fullfile, data);
+  char *filename[2];
+  char *token;
+  char pd = '.';
+
+  token = strtok(data, &pd);
+  filename[0] = token;
+
+  if (token != NULL){
+    printf("TOKEN IS: %s\n", token);
+    token = strtok(NULL, &pd);
+    filename[1] = token;
+  }
+
+  if (filename[1] == NULL) {                        // DIRECTORY
+
+    dir_req(filename[0]);
+
+  } else if (!strcmp(filename[1], "html")){         // HTML FILE 
+
+    html_req(fullfile);
+
+  } else if (!strcmp(filename[1], "jpg") || !strcmp(filename[1], "jpeg") || !strcmp(filename[1], "gif")) {                                    // STATIC IMAGE
+
+    jpg_req(fullfile);
+    
+  } else if (!strcmp(filename[1], "py")) {                                    // CGI SCRIPT
+    
+    cgi_req(fullfile);
+
+    //} else if () {                                    // PROGRAM & HTML FORMATTER
+  } else {                                          // GNUPLOT IMAGE
+    
+    handle_gnuplot(fullfile);
+
+  }
+
+
+  
+}
 
 int  buildResponse(int type,char *s1, char *s2, int len){
     	switch (type) {

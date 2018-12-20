@@ -4,5 +4,11 @@ create:
 	gcc -o tcp_server tcp_server.c libserver.a 
 	gcc -o tcp_client tcp_client.c libserver.a 
 
+webserv: webserv.c
+	gcc -pthread -o webserv  webserv.c
+
+debug: webserv.c
+	gcc -g -pthread -o debugWebserv  webserv.c
+
 clean:
-	rm my-histogram tcp_server tcp_client libserver.a
+	rm my-histogram tcp_server tcp_client libserver.a debugWebserv webserv
