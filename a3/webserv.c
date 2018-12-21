@@ -253,49 +253,113 @@ int handle_gnuplot(char *pname, int sd)
 {
 
     count_files(pname);
+    jpg_req("graph.png", sd);
 }
 
 int handle_info(char *data, int sd)
 {
 
+  printf("data is: %s\n", data);
+  
     char *fullfile = malloc(sizeof(data));
     strcpy(fullfile, data);
     char *filename[2];
     char *token;
     char pd = '.';
+    
+    int i = 0;
+    char *op;
+    char *dir;
 
-    token = strtok(data, &pd);
-    filename[0] = token;
+    char *ext;
+
+    int con = strstr(url, "?");
+
+    if (con == NULL){
+      
+      op = url;
+      char *x = strtok(url, ".");
+      char *kv[2];
+      i = 0;
+      while (x != NULL){
+	kv[i] = x;
+	x = strtok(NULL, ".");
+      }
+      
+      ext = kv[0];
+      //op = url;                                                                                                                                                                                         
+      
+      printf("OP is: %s\n", op);
+      printf("EXT is: %s\n", ext);
+      
+      return(0);
+    
+    } else {
+    
+      char *p = strtok (url, "?");
+      char *array[2];
+      
+      while (p != NULL){
+	array[i++] = p;
+	p = strtok (NULL, "?");
+      }
+      
+      for (i = 0; i < 2; ++i)
+	printf("%s\n", array[i]);
+      
+      
+      char *x = strtok(array[1], "=");
+      char *kv[2];
+      i = 0;
+      while (x != NULL){
+	kv[i] = x;
+	x = strtok(NULL, "=");
+      }
+      
+    }
 
     if (token != NULL)
+      {
+	printf("TOKEN IS: %s\n", token);
+	token = strtok(NULL, ".");
+	filename[1] = token;
+	}
+    
+    printf("POINT A\n");
+    
+    if (!strcmp(op, "car_start"))
+      { // DIRECTORY
+	
+	//handle_gnuplot(op);
+	
+        //dir_req(filename[0], sd);
+      }
+    else if (!strcmp(op, "listdir"))
     {
-        printf("TOKEN IS: %s\n", token);
-        token = strtok(NULL, ".");
-        filename[1] = token;
+      dir_req(dir);
+      
     }
-
-    if (filename[1] == NULL)
-    { // DIRECTORY
-
-        //handle_gnuplot(fullfile);
-
-        dir_req(filename[0], sd);
-    }
-    else if (!strcmp(filename[1], "html"))
+    else if (!strcmp(ext, "html"))
     { // HTML FILE
 
-        html_req(fullfile, sd);
+        html_req(op, sd);
     }
-    else if (!strcmp(filename[1], "jpg") || !strcmp(filename[1], "jpeg") || !strcmp(filename[1], "gif"))
+    else if (!strcmp(ext, "jpg") || !strcmp(ext, "jpeg") || !strcmp(ext, "gif"))
     { // STATIC IMAGE
 
-        jpg_req(fullfile, sd);
+        jpg_req(op, sd);
     }
-    else if (!strcmp(filename[1], "py") || !strcmp(filename[1], "cgi"))
+    else if (!strcmp(ext, "py") || !strcmp(ext, "cgi"))
     { // CGI SCRIPT
 
-        cgi_req(fullfile, sd);
+      if (filename[0] == "gethist"){
 
+	handle_gnuplot(op);
+	
+      } else {
+      
+        cgi_req(op, sd);
+      }
         //} else if () {                                    // PROGRAM & HTML FORMATTER
     }
     else

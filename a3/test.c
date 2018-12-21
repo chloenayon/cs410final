@@ -3,19 +3,31 @@
 
 int main(int argn, char *argv[]){
 
-  char url[100] = "listdir?directory='/home/ckaubisch/cs410final/a3'";
-  //char url[100] = "quokka.jpg";
+  //char url[100] = "listdir?directory='/home/ckaubisch/cs410final/a3'";
+  char url[100] = "quokka.jpg";
   
   int i = 0;
   char *op;
-
+  char *ext;
+  
   int con = strstr(url, "?");
   
   if (con == NULL){
 
     op = url;
+    char *x = strtok(url, ".");
+    char *kv[2];
+    i = 0;
+    while (x != NULL){
+      kv[i] = x;
+      x = strtok(NULL, ".");
+    }
+
+    ext = kv[0];
+    //op = url;
 
     printf("OP is: %s\n", op);
+    printf("EXT is: %s\n", ext);
     
     return(0);
     
