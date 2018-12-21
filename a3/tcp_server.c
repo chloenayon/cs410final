@@ -11,6 +11,8 @@
 #include <fcntl.h>
 #include "server.h"
 #include <unistd.h>
+#include <time.h>
+
 
 void servConn (int port) {
 
@@ -59,13 +61,13 @@ void servConn (int port) {
 	read (new_sd, &data, 25); /* Read our string: "Hello, World!" */
 	printf ("Received string = %s\n", data);
 
+	handle_info(&data);
+	
 	parsed_data = strtok(data, f_slash);
 	parsed_data = strtok(NULL, f_slash);
 	
 	printf("data received is: %s\n", parsed_data);
 	
-	handle_info(&parsed_data);
-
 	exit(0);
       }
   }
@@ -74,7 +76,7 @@ void servConn (int port) {
 int err_404(){
   char *resp = "HTTP/1.1 404 Not Found\nContent-Type: text/html\nContent-Length: 44\n\n<!DOCTYPE html> <html> <body> <h1> ERROR 4O4: NOT FOUND </h1></body> </html>\n";
 }
-strcat(info, "Block Device");
+
 int err_501(){
   char *resp = "HTTP/1.1 501 Not Implemented\nContent-Type: text/html\nContent-Length: 44\n\n<!DOCTYPE html> <html> <body> <h1> ERROR 501: NOT IMPLEMENTED </h1></body> </html>\n";
 }
@@ -82,10 +84,12 @@ int err_501(){
 int get_file(char *fname, char *listing){
 
   struct stat buf;
-  char *pathname = malloc(64);
+  char *pathname = malloc(128);
   pathname = fname;
   char *info = malloc(256);
-
+  char *time = malloc(256);
+  int fp;
+  
   strcat(info, "   ");
   printf("pathname is: %s\n", pathname);
 
@@ -94,8 +98,6 @@ int get_file(char *fname, char *listing){
   if (res != 0){
     printf("Error: stat failed\n");
   }
-
-  printf("File type:                ");
 
   switch (buf.st_mode & S_IFMT) {
   case S_IFBLK:
@@ -124,6 +126,22 @@ int get_file(char *fname, char *listing){
     break;
   }
 
+  strcat(info, "  ");
+
+  strftime(time, 50, "%B %d %Y , %I:%M:%S", localtime(&(buf.st_ctime)));
+
+  printf("date is: %s\n", time);
+  strcat(info, time);
+
+  strcat(info, "   ");
+
+  char* num = malloc(64);
+
+  sprintf(num, "%d", buf.st_size);
+  printf("size is: %d\n", buf.st_size);
+
+  strcat(info, num);
+  
   strcat(listing, info);
   strcat(listing, "\n");
 
@@ -149,7 +167,7 @@ int dir_req(char *fname){
 
   entry = readdir(thisDir);
   char *e;
-  char *thisdir = malloc(64);
+  char *thisdir = malloc(256);
   
   while (entry != NULL){
     e = entry->d_name;
@@ -161,7 +179,10 @@ int dir_req(char *fname){
       strcat(thisdir, "/");
       strcat(thisdir, e);
 
+      printf("Adding e to listing which is: %s\n", e);
+      
       strcat(listing, e);
+
       get_file(thisdir, listing);
     }
     entry = readdir(thisDir);
