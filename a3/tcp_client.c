@@ -42,8 +42,11 @@ int cliConn (char *host, int port) {
 int main () {
 
   int sd = cliConn ("127.0.0.1", 5050);
+
+  char *msg = "/home/ckaubisch/cs410";
   
-  write (sd, "/home/ugrad/kaubisch/cs410/a3", 50);
+  printf("sending %s\n", msg);
+  write (sd, msg, 64);
   
   return 0;
 }
