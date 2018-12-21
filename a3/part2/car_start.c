@@ -2,9 +2,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-int main()
+int main(int argc, char** argv)
 {
     int fd = open("/dev/ttyUSB0", O_RDWR);
-    write(fd, "g", 1);
+    write(fd, argv[1], 1);
     return 0; 
 }
