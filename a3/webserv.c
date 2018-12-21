@@ -237,7 +237,7 @@ void *connection_handler(void *socket_desc)
    // write(sock, message, strlen(message));
 
     //Receive a message from client
-
+    
     if ((stream = fdopen(sock, "r+")) == NULL)
         perror("ERROR on fdopen\n");
 
