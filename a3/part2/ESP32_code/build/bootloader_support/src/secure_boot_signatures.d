@@ -1,6 +1,6 @@
 src/secure_boot_signatures.o: \
  /home/adi/esp/esp-idf/components/bootloader_support/src/secure_boot_signatures.c \
- /home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h \
+ /home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h \
  /home/adi/esp/esp-idf/components/bootloader_support/include_bootloader/bootloader_flash.h \
  /home/adi/esp/esp-idf/components/newlib/include/stdint.h \
  /home/adi/esp/esp-idf/components/newlib/include/machine/_default_types.h \
@@ -46,7 +46,7 @@ src/secure_boot_signatures.o: \
  /home/adi/esp/esp-idf/components/esp32/include/rom/sha.h \
  /home/adi/esp/esp-idf/components/esp32/include/esp_types.h
 
-/home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h:
+/home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h:
 
 /home/adi/esp/esp-idf/components/bootloader_support/include_bootloader/bootloader_flash.h:
 

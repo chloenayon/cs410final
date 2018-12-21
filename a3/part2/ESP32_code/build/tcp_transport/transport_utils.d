@@ -25,7 +25,7 @@ transport_utils.o: \
  /home/adi/esp/esp-idf/components/newlib/include/sys/sched.h \
  /home/adi/esp/esp-idf/components/newlib/include/sys/stdio.h \
  /home/adi/esp/esp-idf/components/newlib/platform_include/assert.h \
- /home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h \
+ /home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h \
  /home/adi/esp/esp-idf/components/newlib/include/assert.h \
  /home/adi/esp/esp-idf/components/tcp_transport/include/transport_utils.h \
  /home/adi/esp/esp-idf/components/newlib/include/sys/time.h
@@ -80,7 +80,7 @@ transport_utils.o: \
 
 /home/adi/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-/home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h:
+/home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h:
 
 /home/adi/esp/esp-idf/components/newlib/include/assert.h:
 

@@ -1,6 +1,6 @@
 pm_trace.o: /home/adi/esp/esp-idf/components/esp32/pm_trace.c \
  /home/adi/esp/esp-idf/components/esp32/pm_trace.h \
- /home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h \
+ /home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h \
  /home/adi/esp/esp-idf/components/driver/include/driver/gpio.h \
  /home/adi/esp/esp-idf/components/esp32/include/esp_err.h \
  /home/adi/esp/esp-idf/components/newlib/include/stdint.h \
@@ -44,7 +44,7 @@ pm_trace.o: /home/adi/esp/esp-idf/components/esp32/pm_trace.c \
 
 /home/adi/esp/esp-idf/components/esp32/pm_trace.h:
 
-/home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h:
+/home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h:
 
 /home/adi/esp/esp-idf/components/driver/include/driver/gpio.h:
 

@@ -1,5 +1,5 @@
 int_wdt.o: /home/adi/esp/esp-idf/components/esp32/int_wdt.c \
- /home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h \
+ /home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h \
  /home/adi/esp/esp-idf/components/newlib/include/stdint.h \
  /home/adi/esp/esp-idf/components/newlib/include/machine/_default_types.h \
  /home/adi/esp/esp-idf/components/newlib/include/sys/features.h \
@@ -90,7 +90,7 @@ int_wdt.o: /home/adi/esp/esp-idf/components/esp32/int_wdt.c \
  /home/adi/esp/esp-idf/components/soc/esp32/include/soc/periph_defs.h \
  /home/adi/esp/esp-idf/components/esp32/include/esp_int_wdt.h
 
-/home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h:
+/home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h:
 
 /home/adi/esp/esp-idf/components/newlib/include/stdint.h:
 

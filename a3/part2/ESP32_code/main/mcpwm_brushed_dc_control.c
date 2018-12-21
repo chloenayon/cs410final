@@ -38,6 +38,16 @@
 #define LED_STOP        5   // red
 #define LED_BACKWARD    19  // blue
 
+#define TURN_TIME           65
+#define STOP_TIME           100
+#define OBJECTIVE_STOP      200
+#define FIRST_LEG           500
+#define SECOND_LEG          325
+#define THIRD_LEG           200
+#define FOURTH_LEG          200
+#define FIFTH_LEG           300
+#define LAST_LEG            500
+
 #define BUF_SIZE (1024)
 
 //FUNCTION DECLARATIONS
@@ -175,7 +185,7 @@ void turnLeft()
     gpio_set_level(DRIVE_GPIO, 1);
     gpio_set_level(DRIVE_GPIO1, 0);
 
-    printf("Right motor only\n");
+    printf("turning left...\n");
     gpio_set_level(LED_FORWARD, 0);
     gpio_set_level(LED_STOP, 1);
     gpio_set_level(LED_BACKWARD, 1);
@@ -192,7 +202,7 @@ void turnRight()
     gpio_set_level(DRIVE_GPIO, 1);
     gpio_set_level(DRIVE_GPIO1, 0);
 
-    printf("Left motor only\n");
+    printf("turning right...\n");
     gpio_set_level(LED_FORWARD, 1);
     gpio_set_level(LED_STOP, 1);
     gpio_set_level(LED_BACKWARD, 0);
@@ -209,7 +219,7 @@ void forward()
     gpio_set_level(DRIVE_GPIO, 1);
     gpio_set_level(DRIVE_GPIO1, 0);
 
-    printf("Both motors forward slow\n");
+    printf("slow forward...\n");
     gpio_set_level(LED_FORWARD, 1);
     gpio_set_level(LED_STOP, 0);
     gpio_set_level(LED_BACKWARD, 0);
@@ -226,7 +236,7 @@ void fastForward()
     gpio_set_level(DRIVE_GPIO, 1);
     gpio_set_level(DRIVE_GPIO1, 0);
 
-    printf("Both motors forward fast\n");
+    printf("fast forward...\n");
     gpio_set_level(LED_FORWARD, 1);
     gpio_set_level(LED_STOP, 0);
     gpio_set_level(LED_BACKWARD, 0);
@@ -243,7 +253,7 @@ void backwards()
     gpio_set_level(DRIVE_GPIO, 0);
     gpio_set_level(DRIVE_GPIO1, 1);
 
-    printf("Both motors backwards\n");
+    printf("backwards...\n");
     gpio_set_level(LED_FORWARD, 0);
     gpio_set_level(LED_STOP, 0);
     gpio_set_level(LED_BACKWARD, 1);
@@ -254,7 +264,7 @@ void backwards()
 
 void stop()
 {
-    printf("Both motors stop\n");
+    printf("Stopped\n");
     gpio_set_level(LED_FORWARD, 0);
     gpio_set_level(LED_STOP, 1);
     gpio_set_level(LED_BACKWARD, 0);
@@ -298,23 +308,65 @@ void app_main()
             {
                 printf("character match! starting driving sequence...\n");
 
-                turnRight();
-                vTaskDelay(400);
-
-                turnLeft();
-                vTaskDelay(400);
+                stop();
+                vTaskDelay(STOP_TIME);
 
                 forward();
-                vTaskDelay(200);
-
-                fastForward();
-                vTaskDelay(100);
+                vTaskDelay(FIRST_LEG);
 
                 stop();
-                vTaskDelay(300);
+                vTaskDelay(STOP_TIME);
+
+                turnLeft();
+                vTaskDelay(TURN_TIME);
+
+                stop();
+                vTaskDelay(STOP_TIME);
+
+                forward();
+                vTaskDelay(SECOND_LEG);
+
+                stop();
+                vTaskDelay(STOP_TIME);
+
+                turnRight();
+                vTaskDelay(TURN_TIME);
+
+                stop();
+                vTaskDelay(STOP_TIME);
+
+                forward();
+                vTaskDelay(THIRD_LEG);
+
+                stop();
+                vTaskDelay(OBJECTIVE_STOP);
 
                 backwards();
-                vTaskDelay(200);
+                vTaskDelay(FOURTH_LEG);
+
+                stop();
+                vTaskDelay(STOP_TIME);
+
+                turnRight();
+                vTaskDelay(TURN_TIME);
+
+                stop();
+                vTaskDelay(STOP_TIME);
+
+                forward();
+                vTaskDelay(FIFTH_LEG);
+
+                stop();
+                vTaskDelay(STOP_TIME);
+
+                turnRight();
+                vTaskDelay(TURN_TIME);
+
+                stop();
+                vTaskDelay(STOP_TIME);
+
+                fastForward();
+                vTaskDelay(LAST_LEG);
 
                 stop();
 
