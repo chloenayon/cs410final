@@ -273,12 +273,12 @@ int handle_info(char *data, int sd)
 
     char *ext;
 
-    int con = strstr(url, "?");
+    int con = strstr(data, "?");
 
     if (con == NULL){
       
-      op = url;
-      char *x = strtok(url, ".");
+      op = data;
+      char *x = strtok(data, ".");
       char *kv[2];
       i = 0;
       while (x != NULL){
@@ -296,7 +296,7 @@ int handle_info(char *data, int sd)
     
     } else {
     
-      char *p = strtok (url, "?");
+      char *p = strtok (data, "?");
       char *array[2];
       
       while (p != NULL){
@@ -354,7 +354,7 @@ int handle_info(char *data, int sd)
 
       if (filename[0] == "gethist"){
 
-	handle_gnuplot(op);
+	handle_gnuplot(op, sd);
 	
       } else {
       
