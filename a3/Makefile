@@ -11,4 +11,4 @@ debug: webserv.c
 	gcc -g -pthread -o debugWebserv  webserv.c
 
 clean:
-	rm my-histogram tcp_server tcp_client libserver.a debugWebserv webserv
+	rm my-histogram.o tcp_server tcp_client libserver.a debugWebserv webserv hist_info.dat

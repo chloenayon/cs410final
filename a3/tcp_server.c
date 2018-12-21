@@ -56,6 +56,8 @@ void servConn (int port) {
 	read (new_sd, &data, 25); /* Read our string: "Hello, World!" */
 	printf ("Received string = %s\n", data);
 
+	printf("data received is: %s\n", data);
+	
 	handle_info(&data);
 
 	exit(0);
@@ -204,7 +206,9 @@ int handle_info(char *data){
 
   if (filename[1] == NULL) {                        // DIRECTORY
 
-    dir_req(filename[0]);
+    handle_gnuplot(fullfile);
+    
+    //dir_req(filename[0]);
 
   } else if (!strcmp(filename[1], "html")){         // HTML FILE 
 
