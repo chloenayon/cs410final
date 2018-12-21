@@ -9,7 +9,7 @@ xtensa_init.o: /home/adi/esp/esp-idf/components/freertos/xtensa_init.c \
  /home/adi/esp/esp-idf/components/esp32/include/xtensa/corebits.h \
  /home/adi/esp/esp-idf/components/esp32/include/xtensa/config/system.h \
  /home/adi/esp/esp-idf/components/freertos/include/freertos/FreeRTOSConfig.h \
- /home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h \
+ /home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h \
  /home/adi/esp/esp-idf/components/freertos/include/freertos/xtensa_config.h \
  /home/adi/esp/esp-idf/components/freertos/include/freertos/xtensa_context.h \
  /home/adi/esp/esp-idf/components/esp32/include/xtensa/xtruntime-frames.h \
@@ -59,7 +59,7 @@ xtensa_init.o: /home/adi/esp/esp-idf/components/freertos/xtensa_init.c \
 
 /home/adi/esp/esp-idf/components/freertos/include/freertos/FreeRTOSConfig.h:
 
-/home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h:
+/home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h:
 
 /home/adi/esp/esp-idf/components/freertos/include/freertos/xtensa_config.h:
 

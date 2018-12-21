@@ -13,6 +13,7 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include "server.h"
+#include <sys/sendfile.h>
 
 #define REQLEN 2048
 #define RESLEN 2048
@@ -32,17 +33,84 @@ char *err_501()
     char *resp = "HTTP/1.1 501 Not Implemented\nContent-Type: text/html\nContent-Length: 44\n\n<!DOCTYPE html> <html> <body> <h1> ERROR 501: NOT IMPLEMENTED </h1></body> </html>\n";
     return resp;
 }
+int get_file(char *fname, char *listing)
+{
 
-int dir_req(char *fname, int *sd)
+    struct stat buf;
+    char *pathname = malloc(128);
+    pathname = fname;
+    char *info = malloc(256);
+    char *time = malloc(256);
+    int fp;
+
+    strcat(info, "   ");
+    printf("pathname is: %s\n", pathname);
+
+    int res = lstat(pathname, &buf);
+
+    if (res != 0)
+    {
+        printf("Error: stat failed\n");
+    }
+
+    switch (buf.st_mode & S_IFMT)
+    {
+    case S_IFBLK:
+        strcat(info, "Block Device");
+        break;
+    case S_IFCHR:
+        strcat(info, "Character Device");
+        break;
+    case S_IFDIR:
+        strcat(info, "Directory");
+        break;
+    case S_IFIFO:
+        strcat(info, "FIFO");
+        break;
+    case S_IFLNK:
+        strcat(info, "Symlink");
+        break;
+    case S_IFREG:
+        strcat(info, "Regular File");
+        break;
+    case S_IFSOCK:
+        strcat(info, "Socket");
+        break;
+    default:
+        strcat(info, "Unknown");
+        break;
+    }
+
+    strcat(info, "  ");
+
+    strftime(time, 50, "%B %d %Y , %I:%M:%S", localtime(&(buf.st_ctime)));
+
+    printf("date is: %s\n", time);
+    strcat(info, time);
+
+    strcat(info, "   ");
+
+    char *num = malloc(64);
+
+    sprintf(num, "%d", buf.st_size);
+    printf("size is: %d\n", buf.st_size);
+
+    strcat(info, num);
+
+    strcat(listing, info);
+    strcat(listing, "\n");
+
+    //free(pathname);
+    //free(info);
+}
+
+int dir_req(char *fname, int sd)
 {
 
     DIR *thisDir;
     struct dirent *entry;
-    char dirHead[] = "THIS IS DIRECTORY!";
-    printf("%s\n", dirHead);
-
-    write(sd, dirHead, sizeof(dirHead));
-    char *listing = malloc(1024);
+    char *response = malloc(RESLEN + RESLEN);
+    char *listing = malloc(RESLEN);
     thisDir = opendir(fname);
 
     if (thisDir == NULL)
@@ -54,21 +122,35 @@ int dir_req(char *fname, int *sd)
 
     entry = readdir(thisDir);
     char *e;
-
+    char *thisdir = malloc(256);
     while (entry != NULL)
     {
-        e = entry->d_name;
+        e = strcat(entry->d_name," <br>");
         //printf("current entry is: %s\n", e);
-        strcat(listing, e);
-        strcat(listing, "\n");
+        if ((strcmp(e, ".git") != 0) && (strcmp(e, ".") != 0) && (strcmp(e, "..") != 0))
+        {
+            strcpy(thisdir, "");
+            printf("current entry is: %s\n", e);
+
+            strcat(thisdir, fname);
+            strcat(thisdir, "/");
+            strcat(thisdir, e);
+
+            printf("Adding e to listing which is: %s\n", e);
+
+            strcat(listing, e);
+
+            get_file(thisdir, listing);
+        }
         entry = readdir(thisDir);
     }
-
+    sprintf(response, "HTTP/1.1 200 OK \r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\nTHIS IS DIRECTORY %s :\r\n%s\r\n", strlen(listing), listing, fname);
     printf("full listing is: \n %s\n", listing);
-    write(sd, listing, sizeof(listing));
+
+    write(sd, response, strlen(response));
 }
 
-int html_req(char *fname, int *sd)
+int html_req(char *fname, int sd)
 {
     char *type = "200 OK";
     printf("This is the file: %s!\n", fname);
@@ -88,8 +170,8 @@ int html_req(char *fname, int *sd)
     read(fd, html, RESLEN);
     //write(sd,"check one two",14);
     printf("this is the content: %s\n", html);
-    char *response = malloc(RESLEN+RESLEN);
-    sprintf(response, "HTTP/1.1 %s\nContent-Type: text/html\nContent-Length: %d\n\n%s", type, RESLEN, html);
+    char *response = malloc(RESLEN + RESLEN);
+    sprintf(response, "HTTP/1.1 %s\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n%s", type, RESLEN, html);
     printf("this is the response we are sending:\n%s\n", response);
 
     write(sd, response, strlen(response));
@@ -100,32 +182,40 @@ int html_req(char *fname, int *sd)
     // printf("this is the num bytes written %d\n", bytes);
 }
 
-int jpg_req(char *fname, int *sd)
+int jpg_req(char *fname, int sd)
 {
 
     printf("This is the file: %s!\n", fname);
 
-    FILE *fd;
-    fd = fopen(fname, "r");
+    //FILE *fd;
+    int fd = open(fname, O_RDONLY, 0777);
     long size;
     char *buf = 0;
 
-    if (fd == NULL)
+    if (fd == -1)
     {
         printf("SOME ERROR HAS OCCURRED OR NO SUCH FILE FOUND!\n");
         buf = err_404();
         return 1;
     }
 
-    fseek(fd, 0, SEEK_END);
-    size = ftell(fd);
-    fseek(fd, 0, SEEK_SET);
+    lseek(fd, 0, SEEK_END);
+    size = lseek(fd, 0, SEEK_CUR);
+    lseek(fd, 0, SEEK_SET);
 
     buf = malloc(size);
-    write(sd, buf, sizeof(buf));
+    char *response = malloc(RESLEN);
+    sprintf(response, "HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\n\r\n");
+    printf("this is the response we are sending:\n%s\n", response);
+    int bytes = write(sd, response, strlen(response));
+    printf("we sent :%d bytes\n", bytes);
+    int sent = sendfile(sd, fd, NULL, 10000);
+    printf("sent \n%d\n", sent);
+
+    close(fd);
 }
 
-int cgi_req(char *fname, int *sd)
+int cgi_req(char *fname, int sd)
 {
 
     printf("in cgi-req, fname is %s\n", fname);
@@ -150,20 +240,22 @@ int cgi_req(char *fname, int *sd)
         //printf("%s\n", buf);
         strcat(fin, buf);
     }
-    write(sd, fin, sizeof(fin));
+    char *response = malloc(RESLEN + RESLEN);
+    sprintf(response, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n%s", strlen(fin), fin);
+    write(sd, response, strlen(response));
     printf("RESULT: %s\n", fin);
 
     pclose(fp);
     free(buf);
 }
 
-int handle_gnuplot(char *pname, int *sd)
+int handle_gnuplot(char *pname, int sd)
 {
 
     count_files(pname);
 }
 
-int handle_info(char *data, int *sd)
+int handle_info(char *data, int sd)
 {
 
     char *fullfile = malloc(sizeof(data));
@@ -178,7 +270,7 @@ int handle_info(char *data, int *sd)
     if (token != NULL)
     {
         printf("TOKEN IS: %s\n", token);
-        token = strtok(NULL, &pd);
+        token = strtok(NULL, ".");
         filename[1] = token;
     }
 
@@ -199,7 +291,7 @@ int handle_info(char *data, int *sd)
 
         jpg_req(fullfile, sd);
     }
-    else if (!strcmp(filename[1], "py"))
+    else if (!strcmp(filename[1], "py") || !strcmp(filename[1], "cgi"))
     { // CGI SCRIPT
 
         cgi_req(fullfile, sd);
@@ -267,7 +359,7 @@ void *connection_handler(void *socket_desc)
             //fp = fopen(url, "r+");
             printf(request); */
 
-    printf("reached here\n");
+    /*  printf("reached here\n");
     if ((strcmp(uri, "/") != 0) || (strcmp(uri, "index.html") != 0))
     {
         char *html = malloc(RESLEN);
@@ -276,8 +368,8 @@ void *connection_handler(void *socket_desc)
         char *response = malloc(RESLEN);
         char type[] = "200 OK";
         snprintf(response, RESLEN, "HTTP/1.1 %s\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n%s\r\n", type, RESLEN, html);
-        write(sock, response,strlen(response));
-    }
+        write(sock, response, strlen(response));
+    } */
     memmove(uri, uri + 1, strlen(uri));
 
     handle_info(uri, sock);

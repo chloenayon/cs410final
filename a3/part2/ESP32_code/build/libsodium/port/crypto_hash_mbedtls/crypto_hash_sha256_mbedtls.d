@@ -22,7 +22,7 @@ port/crypto_hash_mbedtls/crypto_hash_sha256_mbedtls.o: \
  /home/adi/esp/esp-idf/components/libsodium/libsodium/src/libsodium/include/sodium/export.h \
  /home/adi/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/sha256.h \
  /home/adi/esp/esp-idf/components/mbedtls/port/include/mbedtls/esp_config.h \
- /home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h \
+ /home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h \
  /home/adi/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/check_config.h \
  /home/adi/esp/esp-idf/components/newlib/include/limits.h \
  /home/adi/esp/esp-idf/components/newlib/include/string.h \
@@ -72,7 +72,7 @@ port/crypto_hash_mbedtls/crypto_hash_sha256_mbedtls.o: \
 
 /home/adi/esp/esp-idf/components/mbedtls/port/include/mbedtls/esp_config.h:
 
-/home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h:
+/home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h:
 
 /home/adi/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/check_config.h:
 

@@ -16,7 +16,7 @@ dport_access.o: /home/adi/esp/esp-idf/components/esp32/dport_access.c \
  /home/adi/esp/esp-idf/components/newlib/include/sys/lock.h \
  /home/adi/esp/esp-idf/components/newlib/include/sys/cdefs.h \
  /home/adi/esp/esp-idf/components/newlib/include/sys/string.h \
- /home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h \
+ /home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h \
  /home/adi/esp/esp-idf/components/esp32/include/esp_attr.h \
  /home/adi/esp/esp-idf/components/esp32/include/esp_err.h \
  /home/adi/esp/esp-idf/components/newlib/include/stdio.h \
@@ -129,7 +129,7 @@ dport_access.o: /home/adi/esp/esp-idf/components/esp32/dport_access.c \
 
 /home/adi/esp/esp-idf/components/newlib/include/sys/string.h:
 
-/home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h:
+/home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h:
 
 /home/adi/esp/esp-idf/components/esp32/include/esp_attr.h:
 

@@ -19,7 +19,7 @@ esp-mqtt/lib/mqtt_msg.o: \
  /home/adi/esp/esp-idf/components/newlib/include/sys/string.h \
  /home/adi/esp/esp-idf/components/mqtt/esp-mqtt/lib/include/mqtt_msg.h \
  /home/adi/esp/esp-idf/components/mqtt/esp-mqtt/include/mqtt_config.h \
- /home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h \
+ /home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h \
  /home/adi/esp/esp-idf/components/mqtt/esp-mqtt/lib/include/platform.h \
  /home/adi/esp/esp-idf/components/mqtt/esp-mqtt/lib/include/platform_esp32_idf.h \
  /home/adi/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h \
@@ -169,7 +169,7 @@ esp-mqtt/lib/mqtt_msg.o: \
 
 /home/adi/esp/esp-idf/components/mqtt/esp-mqtt/include/mqtt_config.h:
 
-/home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h:
+/home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h:
 
 /home/adi/esp/esp-idf/components/mqtt/esp-mqtt/lib/include/platform.h:
 

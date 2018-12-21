@@ -41,7 +41,7 @@ syscall_table.o: /home/adi/esp/esp-idf/components/newlib/syscall_table.c \
  /home/adi/esp/esp-idf/components/vfs/include/esp_vfs.h \
  /home/adi/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h \
  /home/adi/esp/esp-idf/components/freertos/include/freertos/FreeRTOSConfig.h \
- /home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h \
+ /home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h \
  /home/adi/esp/esp-idf/components/freertos/include/freertos/xtensa_config.h \
  /home/adi/esp/esp-idf/components/esp32/include/xtensa/hal.h \
  /home/adi/esp/esp-idf/components/esp32/include/xtensa/config/core.h \
@@ -184,7 +184,7 @@ syscall_table.o: /home/adi/esp/esp-idf/components/newlib/syscall_table.c \
 
 /home/adi/esp/esp-idf/components/freertos/include/freertos/FreeRTOSConfig.h:
 
-/home/adi/Desktop/desktop_files/courses/ec444/bu_ec444/Mikulic-Adian/skills/3-Sensor-Actuator-Devices-and-Programming/22-DC-Motor/code/build/include/sdkconfig.h:
+/home/adi/Desktop/desktop_files/courses/cs410/assignment3/repo/cs410final/a3/part2/ESP32_code/build/include/sdkconfig.h:
 
 /home/adi/esp/esp-idf/components/freertos/include/freertos/xtensa_config.h:
 
