@@ -2,7 +2,7 @@
 
 import cgi
 
-print("!DOCTYPE html")
+print("<!DOCTYPE html>")
 print("<html>")
 print("<body>")
 print("<h2> THIS IS THE PYTHON GENERATED HTML FILE </h2>")

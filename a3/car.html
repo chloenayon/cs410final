@@ -1,32 +1,43 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Page Title</title>
     <script>
-        
-    fetch('/car_start')
-  .then(
-    function(response) {
-      if (response.status !== 200) {
-        console.log('Looks like there was a problem. Status Code: ' +
-          response.status);
-        return;
-      }
+        fetch('/car_start')
+            .then(
+                function (response) {
+                    if (response.status !== 200) {
+                        console.log('Looks like there was a problem. Status Code: ' +
+                            response.status);
+                        return;
+                    }
 
-      // Examine the text in the response
-      response.json().then(function(data) {
-        console.log(data);
-      });
-    }
-  )
-  .catch(function(err) {
-    console.log('Fetch Error :-S', err);
-  });
+                    // Examine the text in the response
+                    response.json().then(function (data) {
+                        console.log(data);
+                    });
+                }
+            )
+            .catch(function (err) {
+                console.log('Fetch Error :-S', err);
+            });
 
     </script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
+    <style>
+        .w3-button {
+            width: 150px;
+        }
+
+    </style>
 </head>
+
 <body>
-<h1>Car</h1>
-<div onclick="fetch">Start the Car</div>
+    <div class="w3-container">
+        <h2>Button Colors</h2>
+        <p><button class="w3-button w3-red">Start</button></p>
+        </div>
 </body>
+
 </html>
