@@ -22,18 +22,7 @@
 #define Ok 200
 #define NOTIMPL 500
 
-char *err_404()
-{
-    char *resp = "HTTP/1.1 404 Not Found\nContent-Type: text/html\nContent-Length: 44\n\n<!DOCTYPE html> <html> <body> <h1> ERROR 4O4: NOT FOUND </h1></body> </html>\n";
-    return resp;
-}
-
-char *err_501()
-{
-    char *resp = "HTTP/1.1 501 Not Implemented\nContent-Type: text/html\nContent-Length: 44\n\n<!DOCTYPE html> <html> <body> <h1> ERROR 501: NOT IMPLEMENTED </h1></body> </html>\n";
-    return resp;
-}
-int get_file(char *fname, char *listing)
+void get_file(char *fname, char *listing)
 {
 
     struct stat buf;
@@ -51,6 +40,7 @@ int get_file(char *fname, char *listing)
     if (res != 0)
     {
         printf("Error: stat failed\n");
+        exit - 1;
     }
 
     switch (buf.st_mode & S_IFMT)
@@ -100,11 +90,11 @@ int get_file(char *fname, char *listing)
     strcat(listing, info);
     strcat(listing, "\n");
 
-    //free(pathname);
-    //free(info);
+    free(pathname);
+    free(info);
 }
 
-int dir_req(char *fname, int sd)
+void dir_req(char *fname, int sd)
 {
 
     DIR *thisDir;
@@ -116,8 +106,11 @@ int dir_req(char *fname, int sd)
     if (thisDir == NULL)
     {
         printf("SOME ERROR HAS OCCURRED OR NO SUCH FILE FOUND!\n");
-        listing = err_404();
-        return 1;
+        char *response = malloc(RESLEN + RESLEN);
+        sprintf(response, "HTTP/1.1 404 NOT FOUND \r\nContent-Type: text/html\r\nContent-Length:256 \r\n\r\n<!DOCTYPE html><html><head><title>Page Title</title></head><body><h1>404 ERROR Directory Not Found</h1></body></html>");
+        int bytes = write(sd, response, strlen(response));
+        printf("%d bytes writen to sd: %d", bytes, sd);
+        exit - 1;
     }
 
     entry = readdir(thisDir);
@@ -125,7 +118,7 @@ int dir_req(char *fname, int sd)
     char *thisdir = malloc(256);
     while (entry != NULL)
     {
-        e = strcat(entry->d_name," <br>");
+        e = strcat(entry->d_name, "\n");
         //printf("current entry is: %s\n", e);
         if ((strcmp(e, ".git") != 0) && (strcmp(e, ".") != 0) && (strcmp(e, "..") != 0))
         {
@@ -148,9 +141,11 @@ int dir_req(char *fname, int sd)
     printf("full listing is: \n %s\n", listing);
 
     write(sd, response, strlen(response));
+    free(response);
+    free(listing);
 }
 
-int html_req(char *fname, int sd)
+void html_req(char *fname, int sd)
 {
     char *type = "200 OK";
     printf("This is the file: %s!\n", fname);
@@ -159,44 +154,47 @@ int html_req(char *fname, int sd)
 
     char *html = malloc(RESLEN);
 
-    if (fd == -1)
+    if (fd < 0)
     {
         printf("SOME ERROR HAS OCCURRED OR NO SUCH FILE FOUND!\n");
-        html = err_404();
-        return 1;
-        type = "404 NOT FOUND";
+        char *response = malloc(RESLEN + RESLEN);
+        sprintf(response, "HTTP/1.1 404 NOT FOUND \r\nContent-Type: text/html\r\nContent-Length:256 \r\n\r\n<!DOCTYPE html><html><head><title>Page Title</title></head><body><h1>404 ERROR File Not Found</h1></body></html>");
+        int bytes = write(sd, response, strlen(response));
+        printf("%d bytes writen to sd: %d", bytes, sd);
+        exit - 1;
     }
 
     read(fd, html, RESLEN);
     //write(sd,"check one two",14);
     printf("this is the content: %s\n", html);
     char *response = malloc(RESLEN + RESLEN);
-    sprintf(response, "HTTP/1.1 %s\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n%s", type, RESLEN, html);
-    printf("this is the response we are sending:\n%s\n", response);
+    sprintf(response, "HTTP/1.1 200 OK \r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n%s", strlen(html) + 64, html);
+    printf("response to send: \n %s\n", response);
 
-    write(sd, response, strlen(response));
+    int bytes = write(sd, response, strlen(response));
+    printf("%d bytes writen to sd: %d\n", bytes, sd);
 
     free(response);
     free(html);
     close(fd);
-    // printf("this is the num bytes written %d\n", bytes);
 }
 
-int jpg_req(char *fname, int sd)
+void jpg_req(char *fname, int sd, char *type)
 {
 
     printf("This is the file: %s!\n", fname);
-
-    //FILE *fd;
     int fd = open(fname, O_RDONLY, 0777);
     long size;
     char *buf = 0;
 
-    if (fd == -1)
+    if (fd < 0)
     {
         printf("SOME ERROR HAS OCCURRED OR NO SUCH FILE FOUND!\n");
-        buf = err_404();
-        return 1;
+        char *response = malloc(RESLEN + RESLEN);
+        sprintf(response, "HTTP/1.1 404 NOT FOUND \r\nContent-Type: text/html\r\nContent-Length: 256\r\n\r\n<!DOCTYPE html><html><head><title>Page Title</title></head><body><h1>404 ERROR File Not Found</h1></body></html>");
+        int bytes = write(sd, response, strlen(response));
+        printf("%d bytes writen to sd: %d", bytes, sd);
+        exit - 1;
     }
 
     lseek(fd, 0, SEEK_END);
@@ -205,7 +203,7 @@ int jpg_req(char *fname, int sd)
 
     buf = malloc(size);
     char *response = malloc(RESLEN);
-    sprintf(response, "HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\n\r\n");
+    sprintf(response, "HTTP/1.1 200 OK\r\nContent-Type: image/%s\r\n\r\n", type);
     printf("this is the response we are sending:\n%s\n", response);
     int bytes = write(sd, response, strlen(response));
     printf("we sent :%d bytes\n", bytes);
@@ -213,9 +211,10 @@ int jpg_req(char *fname, int sd)
     printf("sent \n%d\n", sent);
 
     close(fd);
+    free(buf);
 }
 
-int cgi_req(char *fname, int sd)
+void cgi_req(char *fname, int sd)
 {
 
     printf("in cgi-req, fname is %s\n", fname);
@@ -231,13 +230,15 @@ int cgi_req(char *fname, int sd)
     if (fp == NULL)
     {
         printf("SOME ERROR HAS OCCURRED OR NO SUCH FILE FOUND!\n");
-        fin = err_404();
-        return 1;
+        char *response = malloc(RESLEN + RESLEN);
+        sprintf(response, "HTTP/1.1 404 NOT FOUND \r\nContent-Type: text/html\r\nContent-Length: 256\r\n\r\n<!DOCTYPE html><html><head><title>Page Title</title></head><body><h1>404 ERROR File Not Found</h1></body></html>");
+        int bytes = write(sd, response, strlen(response));
+        printf("%d bytes writen to sd: %d", bytes, sd);
+        // exit -1;
     }
 
     while (fgets(buf, 31, fp) != NULL)
     {
-        //printf("%s\n", buf);
         strcat(fin, buf);
     }
     char *response = malloc(RESLEN + RESLEN);
@@ -249,13 +250,13 @@ int cgi_req(char *fname, int sd)
     free(buf);
 }
 
-int handle_gnuplot(char *pname, int sd)
+void handle_gnuplot(char *pname, int sd)
 {
 
     count_files(pname);
 }
 
-int handle_info(char *data, int sd)
+void handle_info(char *data, int sd)
 {
 
     char *fullfile = malloc(sizeof(data));
@@ -286,10 +287,10 @@ int handle_info(char *data, int sd)
 
         html_req(fullfile, sd);
     }
-    else if (!strcmp(filename[1], "jpg") || !strcmp(filename[1], "jpeg") || !strcmp(filename[1], "gif"))
+    else if (!strcmp(filename[1], "jpg") || !strcmp(filename[1], "jpeg") || !strcmp(filename[1], "gif") || !strcmp(filename[1], "png"))
     { // STATIC IMAGE
 
-        jpg_req(fullfile, sd);
+        jpg_req(fullfile, sd, filename[1]);
     }
     else if (!strcmp(filename[1], "py") || !strcmp(filename[1], "cgi"))
     { // CGI SCRIPT
@@ -312,12 +313,8 @@ void *connection_handler(void *socket_desc)
 
     int read_size;
     char *message;
-    //char *request = args->data;
     char request[REQLEN];
     FILE *stream;
-    char *responseHead;
-    char *responseBody;
-    const char *buildResponse;
     char method[REQLEN];  /* request method */
     char uri[REQLEN];     /* request uri */
     char version[REQLEN]; /* request method */
@@ -332,67 +329,35 @@ void *connection_handler(void *socket_desc)
     //Receive a message from client
 
     if ((stream = fdopen(sock, "w+")) == NULL)
+    {
         perror("ERROR on fdopen\n");
-
+        exit - 1;
+    }
     /* get the HTTP request line */
     fgets(request, REQLEN, stream);
     printf("this is the request : \n%s", request);
     sscanf(request, "%s %s %s\n", method, uri, version);
-    /* {
-        //end of string marker
-        request[read_size] = '\0';
 
-        //Send the message back to client
-        // printf(request);
-
-        // respond_to_client(request, &message);
-
-        //printf("*************\n%s**************\n",request);
-        char *firstline = strtok(request, "\n");
-        printf("*************\n%s**************\n", firstline);
-        sscanf(firstline, "%s %s %s\n", method, url, version);
-
-        //printf("-------------------\nReceived string = %s\n-----------------------\n", request);
-
-        if (strcmp(method, "GET"))
-        {
-            //fp = fopen(url, "r+");
-            printf(request); */
-
-    /*  printf("reached here\n");
-    if ((strcmp(uri, "/") != 0) || (strcmp(uri, "index.html") != 0))
+    if (strcmp(method, "Get"))
     {
-        char *html = malloc(RESLEN);
-        int index = open("index.html", O_RDONLY, 0777);
-        read(index, html, RESLEN);
-        char *response = malloc(RESLEN);
-        char type[] = "200 OK";
-        snprintf(response, RESLEN, "HTTP/1.1 %s\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n%s\r\n", type, RESLEN, html);
-        write(sock, response, strlen(response));
-    } */
-    memmove(uri, uri + 1, strlen(uri));
+        printf("Method: is Get");
 
-    handle_info(uri, sock);
-    //buildResponse(int type, char *s1, char *s2, int len);
-    // }
+        memmove(uri, uri + 1, strlen(uri));
 
-    // write(sock, request, strlen(request));
+        handle_info(uri, sock);
+    }
+    else
+    {
+        char *response = malloc(RESLEN + RESLEN);
+        sprintf(response, "HTTP/1.1 500 NOT IMPLEMENTED \r\nContent-Type: text/html\r\nContent-Length: 256\r\n\r\n<!DOCTYPE html><html><head><title>Page Title</title></head><body><h1>This Fucntionality is not implemented!</h1></body></html>");
+        int bytes = write(sock, response, strlen(response));
+        printf("%d bytes writen to sd: %d", bytes, sock);
+    }
 
     //clear the message buffer
     memset(request, 0, REQLEN);
-    //}
+    fclose(stream);
 
-    /*   if (read_size == 0)
-    {
-        puts("Client disconnected");
-        fflush(stdout);
-    }
-    else if (read_size == -1)
-    {
-        perror("recv failed");
-    } */
-
-    return 0;
 }
 
 void servConn(int port)
@@ -436,8 +401,6 @@ void servConn(int port)
         new_sd = accept(sd, (struct sockaddr *)&cli_name, &cli_len);
         printf("Assigning new socket descriptor:  %d\n", new_sd);
 
-        //close(sd);
-        // write(new_sd,"connected",9);
         if (pthread_create(&thread_id, NULL, connection_handler, (void *)&new_sd) < 0)
         {
             perror("could not create thread\n");
