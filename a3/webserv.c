@@ -33,7 +33,7 @@ char *err_501()
     return resp;
 }
 
-int dir_req(char *fname, int sd)
+int dir_req(char *fname, int *sd)
 {
 
     DIR *thisDir;
@@ -68,9 +68,9 @@ int dir_req(char *fname, int sd)
     write(sd, listing, sizeof(listing));
 }
 
-int html_req(char *fname, int sd)
+int html_req(char *fname, int *sd)
 {
-    char *type= "200 OK";
+    char *type = "200 OK";
     printf("This is the file: %s!\n", fname);
 
     int fd = open(fname, O_RDONLY, 0777);
@@ -85,21 +85,22 @@ int html_req(char *fname, int sd)
         type = "404 NOT FOUND";
     }
 
-    read(fd, html, 2048);
-
+    read(fd, html, RESLEN);
+    //write(sd,"check one two",14);
     printf("this is the content: %s\n", html);
-    char *resp;
-    sprintf(resp, "HTTP/1.1 %s\nContent-Type: text/html\nContent-Length: %d\n\n%s", type, (int)((int)sizeof(html) + 130), html);
-    printf("this is the response we are sending: %s\n",resp);
-    int bytes = write(sd,resp, sizeof(resp));
-    free(resp);
+    char *response = malloc(RESLEN+RESLEN);
+    sprintf(response, "HTTP/1.1 %s\nContent-Type: text/html\nContent-Length: %d\n\n%s", type, RESLEN, html);
+    printf("this is the response we are sending:\n%s\n", response);
+
+    write(sd, response, strlen(response));
+
+    free(response);
     free(html);
     close(fd);
-    printf("this is the num bytes written %d\n",bytes);
-    
+    // printf("this is the num bytes written %d\n", bytes);
 }
 
-int jpg_req(char *fname, int sd)
+int jpg_req(char *fname, int *sd)
 {
 
     printf("This is the file: %s!\n", fname);
@@ -124,7 +125,7 @@ int jpg_req(char *fname, int sd)
     write(sd, buf, sizeof(buf));
 }
 
-int cgi_req(char *fname, int sd)
+int cgi_req(char *fname, int *sd)
 {
 
     printf("in cgi-req, fname is %s\n", fname);
@@ -156,15 +157,15 @@ int cgi_req(char *fname, int sd)
     free(buf);
 }
 
-int handle_gnuplot(char *pname, int sd)
+int handle_gnuplot(char *pname, int *sd)
 {
 
     count_files(pname);
 }
 
-int handle_info(char *data, int sd)
+int handle_info(char *data, int *sd)
 {
-    printf("this is the file descriptor: %d\n", sd);
+
     char *fullfile = malloc(sizeof(data));
     strcpy(fullfile, data);
     char *filename[2];
@@ -184,9 +185,9 @@ int handle_info(char *data, int sd)
     if (filename[1] == NULL)
     { // DIRECTORY
 
-        handle_gnuplot(fullfile, sd);
+        //handle_gnuplot(fullfile);
 
-        //dir_req(filename[0]);
+        dir_req(filename[0], sd);
     }
     else if (!strcmp(filename[1], "html"))
     { // HTML FILE
@@ -231,14 +232,14 @@ void *connection_handler(void *socket_desc)
 
     //Send some messages to the client
     //message = "Greetings! I am your connection handler\n";
-   // write(sock, message, strlen(message));
+    // write(sock, message, strlen(message));
 
     //message = "Now type something and i shall repeat what you type \n";
-   // write(sock, message, strlen(message));
+    // write(sock, message, strlen(message));
 
     //Receive a message from client
 
-    if ((stream = fdopen(sock, "r+")) == NULL)
+    if ((stream = fdopen(sock, "w+")) == NULL)
         perror("ERROR on fdopen\n");
 
     /* get the HTTP request line */
@@ -267,7 +268,16 @@ void *connection_handler(void *socket_desc)
             printf(request); */
 
     printf("reached here\n");
-
+    if ((strcmp(uri, "/") != 0) || (strcmp(uri, "index.html") != 0))
+    {
+        char *html = malloc(RESLEN);
+        int index = open("index.html", O_RDONLY, 0777);
+        read(index, html, RESLEN);
+        char *response = malloc(RESLEN);
+        char type[] = "200 OK";
+        snprintf(response, RESLEN, "HTTP/1.1 %s\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n%s\r\n", type, RESLEN, html);
+        write(sock, response,strlen(response));
+    }
     memmove(uri, uri + 1, strlen(uri));
 
     handle_info(uri, sock);
@@ -335,6 +345,7 @@ void servConn(int port)
         printf("Assigning new socket descriptor:  %d\n", new_sd);
 
         //close(sd);
+        // write(new_sd,"connected",9);
         if (pthread_create(&thread_id, NULL, connection_handler, (void *)&new_sd) < 0)
         {
             perror("could not create thread\n");
