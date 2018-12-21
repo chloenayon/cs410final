@@ -254,7 +254,7 @@ void handle_gnuplot(char *pname, int sd)
 {
 
     count_files(pname);
-    jpg_req("graph.png", sd);
+    jpg_req("graph.png", sd,"png");
 }
 
 void handle_info(char *data, int sd)
@@ -337,7 +337,7 @@ void handle_info(char *data, int sd)
       }
     else if (!strcmp(op, "listdir"))
     {
-      dir_req(dir);
+      dir_req(dir,sd);
       
     }
     else if (!strcmp(ext, "html"))
