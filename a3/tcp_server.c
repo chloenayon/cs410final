@@ -11,6 +11,7 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include "server.h"
+#include <unistd.h>
 
 void servConn (int port) {
 
@@ -19,6 +20,8 @@ void servConn (int port) {
   int sock_opt_val = 1;
   int cli_len;
   char data[80];		/* Our receive data buffer. */
+  const char f_slash[2] = "/";
+  char *parsed_data;
   
   if ((sd = socket (AF_INET, SOCK_STREAM, 0)) < 0) {
     perror("(servConn): socket() error");
@@ -57,9 +60,12 @@ void servConn (int port) {
 	read (new_sd, &data, 25); /* Read our string: "Hello, World!" */
 	printf ("Received string = %s\n", data);
 
-	printf("data received is: %s\n", data);
+	parsed_data = strtok(data, f_slash);
+	parsed_data = strtok(NULL, f_slash);
 	
-	handle_info(&data);
+	printf("data received is: %s\n", parsed_data);
+	
+	handle_info(&parsed_data);
 
 	exit(0);
       }
@@ -69,9 +75,61 @@ void servConn (int port) {
 int err_404(){
   char *resp = "HTTP/1.1 404 Not Found\nContent-Type: text/html\nContent-Length: 44\n\n<!DOCTYPE html> <html> <body> <h1> ERROR 4O4: NOT FOUND </h1></body> </html>\n";
 }
-
+strcat(info, "Block Device");
 int err_501(){
   char *resp = "HTTP/1.1 501 Not Implemented\nContent-Type: text/html\nContent-Length: 44\n\n<!DOCTYPE html> <html> <body> <h1> ERROR 501: NOT IMPLEMENTED </h1></body> </html>\n";
+}
+
+int get_file(char *fname, char *listing){
+
+  struct stat buf;
+  char *pathname = malloc(64);
+  pathname = fname;
+  char *info = malloc(256);
+
+  strcat(info, "   ");
+  printf("pathname is: %s\n", pathname);
+
+  int res = lstat(pathname, &buf);
+
+  if (res != 0){
+    printf("Error: stat failed\n");
+  }
+
+  printf("File type:                ");
+
+  switch (buf.st_mode & S_IFMT) {
+  case S_IFBLK:
+    strcat(info, "Block Device");
+    break;
+  case S_IFCHR:
+    strcat(info, "Character Device");
+    break;
+  case S_IFDIR:
+    strcat(info, "Directory");
+    break;
+  case S_IFIFO:
+    strcat(info, "FIFO");
+    break;
+  case S_IFLNK:
+    strcat(info, "Symlink");
+    break;
+  case S_IFREG:
+    strcat(info, "Regular File");
+    break;
+  case S_IFSOCK:
+    strcat(info, "Socket");
+    break;
+  default:
+    strcat(info, "Unknown");
+    break;
+  }
+
+  strcat(listing, info);
+  strcat(listing, "\n");
+
+  //free(pathname);
+  //free(info);
 }
 
 int dir_req(char *fname){
@@ -92,12 +150,21 @@ int dir_req(char *fname){
 
   entry = readdir(thisDir);
   char *e;
-
+  char *thisdir = malloc(64);
+  
   while (entry != NULL){
     e = entry->d_name;
-    //printf("current entry is: %s\n", e);
-    strcat(listing, e);
-    strcat(listing, "\n");
+    if ((strcmp(e, ".git") != 0) && (strcmp(e, ".") != 0) && (strcmp(e, "..") != 0)){
+      strcpy(thisdir, "");
+      printf("current entry is: %s\n", e);
+
+      strcat(thisdir, fname);
+      strcat(thisdir, "/");
+      strcat(thisdir, e);
+
+      strcat(listing, e);
+      get_file(thisdir, listing);
+    }
     entry = readdir(thisDir);
   }
 
@@ -207,9 +274,9 @@ int handle_info(char *data){
 
   if (filename[1] == NULL) {                        // DIRECTORY
 
-    handle_gnuplot(fullfile);
+    //handle_gnuplot(fullfile);
     
-    //dir_req(filename[0]);
+    dir_req(filename[0]);
 
   } else if (!strcmp(filename[1], "html")){         // HTML FILE 
 
